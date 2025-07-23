@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title >Mining Sensor Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f1f5f9;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 18px;
+      margin: 12px 0;
+    }
+
+    /* Panel title: Only name, no box */
+.panel-title {
+  font-size: 18px;
+  margin: 16px 0 8px;
+  padding: 0;
+  background: none;
+  color: black;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+}
+
+.panel-title:hover {
+  text-decoration: underline;
+  background: none;
+}
+
+/* Panel content: white background for graphs */
+.panel-content {
+  display: none;
+  padding: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: clean up container spacing */
+.collapsible-panel {
+  margin-bottom: 24px;
+}
+
+
+    .chart-title {
+      text-align: center;
+      font-size: 14px;
+      margin: 12px 0 16px;
+      color: #000305;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      margin-bottom: 32px;
+      padding: 12px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #ffffff;
+      box-shadow: 0 2px 8px rgb(247, 245, 245);
+    }
+
+    .chart-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .chart-box {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .chart-wrapper.chrome-layout {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .chart-box {
+        width: 48%;
+      }
+      .gauge-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #111827;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.5);
+  flex-wrap: wrap;
+}
+.gauge-chart {
+  text-align: center;
+  margin: 10px;
+}
+.gauge-label {
+  color: #ccc;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1 style="color: black;">Mining Sensor Dashboard</h1>
+
+<div class="collapsible-panel">
+    <h2 class="panel-title" onclick="togglePanel(this)"> ENV Monitoring</h2>
+    <div class="panel-content">
+      <div class="chart-container">
+        <h3 class="chart-title">Aggregate Environmental View</h3>
+        <canvas id="barChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3 class="chart-title">Air Quality</h3>
+        <canvas id="airQualityChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3 class="chart-title">Humidity Gauge</h3>
+        <canvas id="humidityGauge"></canvas>
+      </div>
+      <div class="chart-container">
+        <h3 class="chart-title">Dust and Temperature</h3>
+        <canvas id="tempDustChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3 class="chart-title">CO₂ vs CO Harmful Gases</h3>
+        <canvas id="gasChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gas Panel -->
+  <div class="collapsible-panel">
+    <h2 class="panel-title" onclick="togglePanel(this)">Machinary Analysis</h2>
+    <div class="panel-content">
+      <div class="chart-container">
+      <h3 class="chart-title">Machine Health</h3>
+      <canvas id="machineBarChart"></canvas>
+    </div>
+    <div class="chart-container">
+    <h3 class="chart-title">Worker Temperature</h3>
+    <canvas id="equipmentStatusChart"></canvas>
+  </div>
+  <div class="chart-container">
+  <h3 class="chart-title">Excavator Fuel</h3>
+  
+  <canvas id="gaugeExcavator" height="150"></canvas>
+</div>
+<div class="chart-container">
+  <h3 class="chart-title">Crusher Fuel</h3>
+  <canvas id="gaugeCrusher" height="150"></canvas>
+</div>
+<div class="chart-container">
+  <h3 class="chart-title">Truck Fuel</h3>
+  <canvas id="gaugeTruck" height="150"></canvas>
+</div>
+<div class="chart-container">
+  <h3 class="chart-title">Loader Fuel</h3>
+  <canvas id="gaugeLoader" height="150"></canvas>
+</div>
+
+  </div>
+  </div>
+  <div class="collapsible-panel">
+    <h2 class="panel-title" onclick="togglePanel(this)">Worker Safety</h2>
+      <div class="panel-content">
+      <div class="chart-container">
+      <h3 class="chart-title">Air Quality</h3>
+      <canvas id="gasBarChart"></canvas>
+      </div>
+  <div class="chart-container">
+  <h3 class="chart-title">Heart Rate</h3>
+  <canvas id="heartRateGauge"></canvas>
+</div>
+<div class="chart-container">
+  <h3 class="chart-title">Aggregate Human Risk Analysis</h3>
+  <canvas id="locationHealthChart"></canvas>
+</div>
+<div class="chart-container">
+  <h3 class="chart-title">Worker Temperature</h3>
+  <canvas id="temperatureLineChart"></canvas>
+</div>
+  
+
+</div>
+</div>
+  <script>
+    const sector = localStorage.getItem('sector') || 'mining';
+    const company = localStorage.getItem('company') || '';
+    const API_URL = `http://10.5.48.48:5001/api/${sector}/dashboard?company=${company}`;
+
+    function togglePanel(titleElement) {
+    const content = titleElement.nextElementSibling;
+    content.style.display = content.style.display === 'none' ? 'block' : 'none';
+  }
+  
+
+  Chart.defaults.color = "#E2E8F0";
+    Chart.defaults.plugins.legend.labels.color = "#E2E8F0";
+    Chart.defaults.plugins.tooltip.backgroundColor = "#1f2937";
+    Chart.defaults.plugins.tooltip.titleColor = "#FBBF24";
+    Chart.defaults.plugins.tooltip.bodyColor = "#F9FAFB";
+    Chart.defaults.borderColor = "#334155";
+    Chart.defaults.font.size = 11;
+
+    // Enhanced color palette
+    const brightColors = [
+      "#FF6B6B", "#4D96FF", "#FFD93D", "#6BCB77", "#C084FC",
+      "#FF8E3C", "#00C2D1", "#FF5D9E", "#A6E3E9", "#845EC2"
+    ];
+
+    // Detect Chrome vs WebView for dynamic bar count
+    
+
+    function getBarLimit() {
+  const ua = navigator.userAgent || '';
+  const isWebView = /(wv|WebView|Android(?!.*Chrome))/.test(ua);
+  return isWebView ? 5 : 10;
+}
+
+async function fetchData() {
+  try {
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    const limit = getBarLimit();
+    return data.slice(-limit); // Dynamic based on browser
+  } catch (err) {
+    console.error("Failed to fetch:", err);
+    return [];
+  }
+}
+
+
+    async function renderChart() {
+      const data = await fetchData();
+      if (!data.length) return;
+
+      const labels = data.map(d => d.time || 'N/A');
+      const fields = [
+        "air_quality", "co_ppm", "co2_ppm", "o2_percentage", "humidity",
+        "water_level_m", "seismic_activity_hz", "noise_pollution_db",
+        "temperature", "dust"
+      ];
+      const colors = [
+        "#f87171", "#fb923c", "#facc15", "#4ade80", "#60a5fa",
+        "#c084fc", "#f472b6", "#fcd34d", "#a3e635", "#38bdf8"
+      ];
+
+      const datasets = fields.map((field, i) => ({
+  label: field.replace(/_/g, " ").toUpperCase(),
+  data: data.map(item => item[field]),
+  backgroundColor: colors[i],
+  borderRadius: 5,
+  categoryPercentage: 1.0,
+  barPercentage: 0.8
+}));
+
+
+      const ctx = document.getElementById('barChart').getContext('2d');
+      document.getElementById('barChart').parentElement.style.height = '400px';
+      document.getElementById('barChart').parentElement.style.width = '100%';
+
+
+      if (window.myChart) window.myChart.destroy();
+
+      window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#fff',
+                font: { size: 9 },
+                boxWidth: 12
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            x: {
+              stacked: false,
+              ticks: { color: '#ccc', font: { size: 10 } },
+              title: { display: true, text: 'Time', color: '#ccc' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#ccc', font: { size: 10 } },
+              title: { display: true, text: 'Sensor Value', color: '#ccc' }
+            }
+          },
+          layout: {
+            padding: 8
+          }
+        }
+      });
+    }
+  function renderAirQualityChart(data) {
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+  const airQualityValues = data.map(d => d.air_quality);
+
+  const ctx = document.getElementById('airQualityChart').getContext('2d');
+  if (window.airQualityChart instanceof Chart) {
+    window.airQualityChart.destroy();
+  }
+
+  window.airQualityChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'AIR QUALITY',
+        data: airQualityValues,
+        borderColor: '#f87171',
+        backgroundColor: 'rgba(248, 113, 113, 0.2)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        pointBackgroundColor: '#f87171'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#000', // black text
+            font: { size: 10 }
+          }
+        },
+        tooltip: {
+          backgroundColor: '#fff',    // white background
+          titleColor: '#000',         // black title
+          bodyColor: '#000',          // black text
+          borderColor: '#ccc',        // light border
+          borderWidth: 1,
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#000', font: { size: 10 } }, // black ticks
+          title: { display: true, text: 'Time', color: '#000' } // black title
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#000', font: { size: 10 } }, // black ticks
+          title: { display: true, text: 'Air Quality Index', color: '#000' } // black title
+        }
+      },
+      layout: {
+        padding: 8
+      }
+    }
+  });
+}
+
+  function renderHumidityGauge(data) {
+  //const data = await fetchData();
+  if (!data.length) return;
+
+  const latestHumidity = data[data.length - 1].humidity || 0;
+
+  const ctx = document.getElementById('humidityGauge').getContext('2d');
+  if (window.humidityChart instanceof Chart) {
+    window.humidityChart.destroy();
+  }
+
+  window.humidityChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Humidity', 'Remaining'],
+      datasets: [{
+        data: [latestHumidity, 100 - latestHumidity],
+        backgroundColor: ['#60a5fa', '#1e293b'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      rotation: -90,
+      circumference: 180,
+      cutout: '70%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+        title: {
+          display: true,
+          text: `${latestHumidity}%`,
+          color: '#fff',
+          font: { size: 18 }
+        }
+      }
+    }
+  });
+}
+  function renderTempDustChart(data) {
+  //const data = await fetchData();
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+  const temperatureValues = data.map(d => d.temperature);
+  const dustValues = data.map(d => d.dust);
+
+  const ctx = document.getElementById('tempDustChart').getContext('2d');
+  if (window.tempDustChart instanceof Chart) {
+    window.tempDustChart.destroy();
+  }
+
+  window.tempDustChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Temperature (°C)',
+          data: temperatureValues,
+          backgroundColor: '#f87171',
+          barThickness: 12
+        },
+        {
+          label: 'Dust Level',
+          data: dustValues,
+          backgroundColor: '#facc15',
+          barThickness: 12
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 10 }
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Time', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Value', color: '#ccc' }
+        }
+      },
+      layout: {
+        padding: 8
+      }
+    }
+  });
+}
+  function renderGasChart(data) {
+  //const data = await fetchData();
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+  const co2Values = data.map(d => d.co2_ppm);
+  const coValues = data.map(d => d.co_ppm);
+
+  const ctx = document.getElementById('gasChart').getContext('2d');
+  if (window.gasChart instanceof Chart) {
+    window.gasChart.destroy();
+  }
+
+  window.gasChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'CO₂ (ppm)',
+          data: co2Values,
+          borderColor: '#60a5fa',
+          backgroundColor: 'rgba(96, 165, 250, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: '#60a5fa'
+        },
+        {
+          label: 'CO (ppm)',
+          data: coValues,
+          borderColor: '#fb923c',
+          backgroundColor: 'rgba(251, 146, 60, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: '#fb923c'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 10 }
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Time', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Concentration (ppm)', color: '#ccc' }
+        }
+      },
+      layout: {
+        padding: 8
+      }
+    }
+  });
+}
+  function renderMachineBarChart(data) {
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+
+  const fields = [
+    "temperature", "pressure", "motor_load", "machine_runtime",
+    "fuel_consumption", "tyre_pressure", "battery_status",
+    "load_weight", "latitude", "longitude"
+  ];
+
+  const colors = [
+    "#f87171", "#60a5fa", "#fb923c", "#a3e635",
+    "#c084fc", "#fcd34d", "#4ade80",
+    "#f472b6", "#94a3b8", "#38bdf8"
+  ];
+
+  const datasets = fields.map((field, i) => ({
+    label: field.replace(/_/g, " ").toUpperCase(),
+    data: data.map(item => item[field]),
+    backgroundColor: colors[i],
+    barThickness: 10,
+    borderRadius: 4
+  }));
+
+  const ctx = document.getElementById('machineBarChart').getContext('2d');
+  if (window.machineChart instanceof Chart) window.machineChart.destroy();
+
+  window.machineChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 10 },
+            boxWidth: 12
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Time', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Value', color: '#ccc' }
+        }
+      },
+      layout: { padding: 8 }
+    }
+  });
+}
+  function renderGasBarChart(data) {
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+  const coValues = data.map(d => d.gas_CO);
+  const co2Values = data.map(d => d.gas_CO2);
+  const h2sValues = data.map(d => d.gas_H2S);
+  const no2Values = data.map(d => d.gas_NO2);
+
+  const ctx = document.getElementById('gasBarChart').getContext('2d');
+  if (window.gasBarChart instanceof Chart) {
+    window.gasBarChart.destroy();
+  }
+
+  window.gasBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'CO (ppm)',
+          data: coValues,
+          backgroundColor: '#f87171',
+          barThickness: 12
+        },
+        {
+          label: 'CO₂ (ppm)',
+          data: co2Values,
+          backgroundColor: '#60a5fa',
+          barThickness: 12
+        },
+        {
+          label: 'H₂S (ppm)',
+          data: h2sValues,
+          backgroundColor: '#facc15',
+          barThickness: 12
+        },
+        {
+          label: 'NO₂ (ppm)',
+          data: no2Values,
+          backgroundColor: '#34d399',
+          barThickness: 12
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 10 }
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Time', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Value (ppm)', color: '#ccc' }
+        }
+      },
+      layout: {
+        padding: 8
+      }
+    }
+  });
+}
+ function renderHeartRateGauge(data) {
+  //const data = await fetchData();
+  if (!data.length) return;
+
+  const latestHeartRate = data[data.length - 1].heart_rate || 0;
+
+  const ctx = document.getElementById('heartRateGauge').getContext('2d');
+  if (window.heartRateChart instanceof Chart) {
+    window.heartRateChart.destroy();
+  }
+
+  window.heartRateChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Heart Rate', 'Remaining'],
+      datasets: [{
+        data: [latestHeartRate, 200 - latestHeartRate],
+        backgroundColor: ['#ef4444', '#1e293b'], // Red + background
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      rotation: -90,
+      circumference: 180,
+      cutout: '70%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+        title: {
+          display: true,
+          text: `${latestHeartRate} bpm`,
+          color: '#fff',
+          font: { size: 16 }
+        }
+      }
+    }
+  });
+}
+  function renderLocationHealthChart(data) {
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+  const datasetFields = [
+    { key: "latitude", color: "#60a5fa", label: "Latitude" },
+    { key: "longitude", color: "#4ade80", label: "Longitude" },
+    { key: "heart_rate", color: "#ef4444", label: "Heart Rate" },
+    { key: "temperature", color: "#f472b6", label: "Temperature" },
+    { key: "gas_CO", color: "#f59e0b", label: "CO" },
+    { key: "gas_CO2", color: "#84cc16", label: "CO₂" },
+    { key: "gas_NO2", color: "#a78bfa", label: "NO₂" },
+    { key: "gas_H2S", color: "#e879f9", label: "H₂S" },
+    { key: "man_down_alert", color: "#f43f5e", label: "Man Down Alert" }
+  ];
+
+  const datasets = datasetFields.map(field => ({
+    label: field.label,
+    data: data.map(d => d[field.key]),
+    backgroundColor: field.color,
+    barThickness: 10,
+    borderRadius: 4
+  }));
+
+  const ctx = document.getElementById('locationHealthChart').getContext('2d');
+  if (window.locationHealthChart instanceof Chart) {
+    window.locationHealthChart.destroy();
+  }
+
+  window.locationHealthChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 9 },
+            boxWidth: 12
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Time', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Sensor Value', color: '#ccc' }
+        }
+      },
+      layout: { padding: 8 }
+    }
+  });
+}
+  function renderTemperatureLineChart(data) {
+  //const data = await fetchData(); // Or pass in your existing dataset
+  if (!data.length) return;
+
+  const labels = data.map(d => d.time || 'N/A');
+  const temperatureValues = data.map(d => d.temperature);
+
+  const ctx = document.getElementById('temperatureLineChart').getContext('2d');
+  if (window.temperatureLineChart instanceof Chart) {
+    window.temperatureLineChart.destroy();
+  }
+
+  window.temperatureLineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Temperature (°C)',
+        data: temperatureValues,
+        borderColor: '#f87171',
+        backgroundColor: 'rgba(248, 113, 113, 0.2)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: '#f87171'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 10 }
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Time', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Temperature (°C)', color: '#ccc' }
+        }
+      },
+      layout: { padding: 8 }
+    }
+  });
+}
+function renderEquipmentStatusChart(data) {
+  if (!Array.isArray(data) || !data.length) return;
+
+  const requiredEquipments = ['Excavator', 'Crusher', 'Truck', 'Loader'];
+
+  // Create a fixed data structure with default 0s, filled with real data if found
+  const filteredData = requiredEquipments.map(name => {
+    const match = data.find(d => d.equipment_name === name);
+    return {
+      equipment_name: name,
+      temperature: match?.temperature ?? 0,
+      pressure: match?.pressure ?? 0,
+      machine_runtime: match?.machine_runtime ?? 0,
+      tyre_pressure: match?.tyre_pressure ?? 0
+    };
+  });
+
+  const labels = filteredData.map(d => d.equipment_name);
+
+  const fields = [
+    { key: 'temperature', label: 'Temperature (°C)', color: '#f87171' },
+    { key: 'pressure', label: 'Pressure (hPa)', color: '#60a5fa' },
+    { key: 'machine_runtime', label: 'Runtime (min)', color: '#34d399' },
+    { key: 'tyre_pressure', label: 'Tyre Pressure (psi)', color: '#fbbf24' }
+  ];
+
+  const datasets = fields.map(field => ({
+    label: field.label,
+    data: filteredData.map(d => d[field.key]),
+    backgroundColor: field.color,
+    barThickness: 12,
+    borderRadius: 5
+  }));
+
+  const ctx = document.getElementById('equipmentStatusChart').getContext('2d');
+
+  if (window.equipmentStatusChart instanceof Chart) {
+    window.equipmentStatusChart.destroy();
+  }
+
+  window.equipmentStatusChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: { size: 10 },
+            boxWidth: 12
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Equipment Name', color: '#ccc' }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc', font: { size: 10 } },
+          title: { display: true, text: 'Value', color: '#ccc' }
+        }
+      },
+      layout: { padding: 10 }
+    }
+  });
+}
+function renderFuelGauges(data) {
+  if (!Array.isArray(data) || !data.length) return;
+
+  const requiredEquipments = ['Excavator', 'Crusher', 'Truck', 'Loader'];
+
+  // Prepare filtered fuel data with default 0s
+  const filteredFuelData = requiredEquipments.map(name => {
+    const match = data.find(d => d.equipment_name === name);
+    return {
+      equipment_name: name,
+      fuel_consumption: match?.fuel_consumption ?? 0
+    };
+  });
+
+  // Render a gauge for each fixed equipment
+  filteredFuelData.forEach(({ equipment_name, fuel_consumption }) => {
+    const canvasId = `gauge${equipment_name}`;
+    const ctx = document.getElementById(canvasId)?.getContext('2d');
+    if (!ctx) return;
+
+    if (window[canvasId] instanceof Chart) {
+      window[canvasId].destroy();
+    }
+
+    window[canvasId] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Fuel', 'Remaining'],
+        datasets: [{
+          data: [fuel_consumption, Math.max(0, 100 - fuel_consumption)],
+          backgroundColor: ['#34d399', '#1e293b'], // Green + dark
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        rotation: -90,
+        circumference: 180,
+        cutout: '70%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+          title: {
+            display: true,
+            text: `${fuel_consumption.toFixed(1)} L`,
+            color: '#fff',
+            font: { size: 16 }
+          }
+        }
+      }
+    });
+  });
+}
+
+
+  async function renderAllCharts() {
+  const data = await fetchData();
+  if (!data.length) return;
+
+  renderChart(data);
+  renderAirQualityChart(data);
+  renderHumidityGauge(data);
+  renderTempDustChart(data);
+  renderGasChart(data);
+  renderMachineBarChart(data);
+  renderGasBarChart(data);
+  renderHeartRateGauge(data);
+  renderLocationHealthChart(data);
+  renderTemperatureLineChart(data);
+  renderEquipmentStatusChart(data);
+  renderFuelGauges(data);
+}
+
+// Run once when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  renderAllCharts();
+  setInterval(renderAllCharts, 60000);
+});
+
+  </script>
+</body>
+</html>
