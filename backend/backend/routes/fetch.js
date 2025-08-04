@@ -21,8 +21,8 @@ module.exports = {
             console.error("❌ DB is not connected or 'query' is not a function.");
             return res.status(500).send("Database not connected");
         }
-
-        db.query('SELECT DISTINCT sector_name FROM companies', (err, result) => {
+        const query = 'SELECT sector_name FROM sector';
+        db.query(query, (err, result) => {
             if (err) {
                 console.error("❌ Error fetching sectors:", err);
                 return res.status(500).send("Error fetching sectors");
@@ -114,10 +114,12 @@ module.exports = {
         time: new Date(row.timestamp).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
+          
         }),
       }));
 
-      res.json(formatted);
+      res.json({ data: formatted });
+
     } catch (err) {
       console.error("❌ SQL Error in sector dashboard:", err);
       res.status(500).json({ error: "Failed to fetch sector data" });

@@ -9,14 +9,14 @@ const fetch = require('./routes/fetch');
 const insert = require('./routes/insert');
 
 const app = express();
-const PORT = 5001;
+const PORT = 5002;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Serve static Flutter HTML dashboards
-const dashboardsPath = path.join('C:/Users/dell/Desktop/flutter_app/flutter_app/assets/dashboard');
+const dashboardsPath = path.join('C:/Users/dell/Desktop/deepika/flutter_app/flutter_app/assets/dashboard');
 app.use('/dashboards', express.static(dashboardsPath));
 
 // MariaDB connection pool
@@ -55,7 +55,7 @@ app.get('/getcompanies', fetch.getcompanies);
 app.get('/sectors', fetch.getsectors);
 app.get('/fetchall', fetch.fetchall);
 app.get('/api/:sector/dashboard', fetch.getSectorDashboard);
-app.get('/api/equipment-status', fetch.getEquipmentStatus);
+//app.get('/api/equipment-status', fetch.getEquipmentStatus);
 app.get('/api/predict', fetch.getPredictions);
 // Routes from insert.js
 app.post('/register', insert.register);
@@ -66,7 +66,7 @@ app.post('/getDashboard', insert.getDashboard);
 app.post('/getDashboardDetails', insert.getDashboardDetails);
 app.post('/forgot-password', insert.forgotPassword);
 app.post('/postdata', insert.insertDht);
-app.post('/getDashboard', insert.getDashboard);
+
 
 // Test route
 app.post('/test', (req, res) => {
