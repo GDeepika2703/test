@@ -227,7 +227,7 @@
     const params = new URLSearchParams(window.location.search);
     const company = params.get('company') || '';
     const sector = params.get('sector') || 'mining';
-    const API_URL = `http://104.154.141.198:5001/api/${sector}/dashboard?company=${company}`;
+    const API_URL = `http://104.154.141.198:5002/api/${sector}/dashboard?company=${company}`;
 
     let cachedData = null;
 

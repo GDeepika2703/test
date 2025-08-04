@@ -83,7 +83,7 @@ Navigator.pushReplacementNamed(context, '/');
     ? 'mining'
     : sectorName.toLowerCase();*/
 
-    final url = 'http://10.5.48.48:5001/dashboards/$sectorName.html'
+    final url = 'http://104.154.141.198:5001/dashboards/$sectorName.html'
         '?company=${Uri.encodeComponent(companyName)}'
         '&sector=${Uri.encodeComponent(sectorName)}';
     Navigator.push(
@@ -94,7 +94,7 @@ Navigator.pushReplacementNamed(context, '/');
   );
   }*/
   Future<void> _loadDashboard() async {
-  const  url = 'http://10.5.48.48:5001/dashboards/mining.html';
+  const  url = 'https://104.154.141.198:5002/dashboards/mining.html';
   Navigator.push(
     context,
     MaterialPageRoute(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'signin_page.dart';
 import 'home_page.dart';
 import 'signup_page.dart';
+import 'forgot_password.dart';
 
 void main() {
   runApp(const MyApp()); // ✅ Use const for performance
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => const SignInPage(), // ✅ const constructors
         '/home': (context) => const HomePage(),
         '/signup': (context) => const SignUpPage(),
+        '/forgot':(context)=>const ForgotPasswordPage()
       },
     );
   }

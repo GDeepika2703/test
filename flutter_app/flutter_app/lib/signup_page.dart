@@ -29,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> fetchSectors() async {
     try {
-      final response = await http.get(Uri.parse('http://10.5.48.48:5001/sectors'));
+      final response = await http.get(Uri.parse('http://104.154.141.198:5002/sectors'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List;
         setState(() {
@@ -48,7 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> fetchCompaniesBySector(String sector) async {
     try {
-      final response = await http.get(Uri.parse('http://10.5.48.48:5001/getcompanies?sector=$sector'));
+      final response = await http.get(Uri.parse('http://104.154.141.198:5002/getcompanies?sector=$sector'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List;
         setState(() {
@@ -76,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    final url = Uri.parse('http://10.5.48.48:5001/register');
+    final url = Uri.parse('http://104.154.141.198:5002/register');
     try {
       final response = await http.post(
         url,

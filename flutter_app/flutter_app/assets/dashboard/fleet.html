@@ -97,7 +97,7 @@
     const rawSector = params.get('sector') || 'fleet';
     const sector = rawSector.toLowerCase() === 'fleet' ? 'mining' : rawSector;
 
-    const API_URL = `http://10.5.48.48:5001/api/mining/dashboard?company=velastra`;
+    const API_URL = `http://104.154.141.198:5002/api/mining/dashboard?company=velastra`;
 
     new Chart(document.getElementById('fuelCircleChart'), {
       type: 'doughnut',

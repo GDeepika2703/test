@@ -22,7 +22,7 @@ class _SignInPageState extends State<SignInPage> {
       return;
     }
 
-    final url = Uri.parse('http://104.154.141.198:5001/signin');
+    final url = Uri.parse('http://104.154.141.198:5002/signin');
     final bool isPhone = phone.length >= 6 && phone.length <= 15;
 
     if (!isPhone) {
