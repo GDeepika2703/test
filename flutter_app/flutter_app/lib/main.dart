@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const SignInPage(), // ✅ const constructors
+        '/': (context) => const SignInPage(),
+        '/signin': (context) => const SignInPage(), // ✅ const constructors
         '/home': (context) => const HomePage(),
         '/signup': (context) => const SignUpPage(),
       },

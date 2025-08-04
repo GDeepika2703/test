@@ -94,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
       final data = json.decode(response.body);
       if (response.statusCode == 201 && data['status'] == 'success') {
         _showAlert('User successfully registered.', onOk: () {
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/signin');
         });
       } else {
         _showAlert(data['message'] ?? 'An error occurred.');

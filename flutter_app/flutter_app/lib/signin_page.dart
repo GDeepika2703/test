@@ -22,7 +22,7 @@ class _SignInPageState extends State<SignInPage> {
       return;
     }
 
-    final url = Uri.parse('http://10.5.48.48:5001/signin');
+    final url = Uri.parse('http://104.154.141.198:5001/signin');
     final bool isPhone = phone.length >= 6 && phone.length <= 15;
 
     if (!isPhone) {
@@ -45,7 +45,9 @@ class _SignInPageState extends State<SignInPage> {
         await prefs.setString('user_id', user['user_id'].toString());
         await prefs.setString('company_name', user['company_name']);
         await prefs.setString('sector_name', user['sector_name']);
-        _showSuccess();
+        if (mounted) {
+        Navigator.pushNamed(context, '/home');
+      }
       } else {
         _showError(data['message'] ?? 'An error occurred');
       }
@@ -70,7 +72,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void _showSuccess() {
+  /*void _showSuccess() {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -84,7 +86,7 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
