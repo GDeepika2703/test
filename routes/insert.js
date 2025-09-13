@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const { MailerSend, EmailParams, Sender, Recipient } = require('mailersend');
 
 const generateRandomNumber = () => Math.floor(1000000 + Math.random() * 9000000);
-const admin = require('firebase-admin');
+/*const admin = require('firebase-admin');
 const serviceAccount = require('../firebase-service-messaging.json');
 
 // Initialize Firebase Admin
@@ -252,7 +252,7 @@ async function runPushNotificationJob() {
 // ---- Start the job automatically when the backend starts ----
 setInterval(runPushNotificationJob, 60 * 1000); // runs every 1 minute
 
-
+*/
 /*
 const sendStatusMailToUser = async (toEmail, userName, status) => {
   try {
