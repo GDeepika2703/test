@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const fetch = require('./routes/fetch');
 const insert = require('./routes/insert');
 const path = require('path');
@@ -9,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 const PORT = 5001;
 
 // Company/region APIs
@@ -16,9 +18,28 @@ app.get('/getcompanies', fetch.getcompanies);
 app.get('/sectors', fetch.getsectors);
 app.get('/getregions', fetch.getregions);
 
+
+
 // Dashboard APIs
 app.get('/fetch-dashboard-data', insert.fetchDashboardData);
+app.get('/api/get_last_10_zaxis', insert.getLast10ZAxis);
 app.post('/api/sensor-data', insert.receiveSensorData);
+app.post('/insert-realtime-data',insert.insertRealtimeData);
+app.post('/api/store_avg_values', async (req, res) => {
+  const { device_id, timestamp, avg_fuel, avg_gradient } = req.body;
+  const sql = `
+    INSERT INTO realtime_sensor_data (device_id, timestamp, fuel_consumption_l_per_100km, avg_gradient)
+    VALUES (?, ?, ?, ?)
+  `;
+  try {
+    await db.query(sql, [device_id, timestamp, avg_fuel, avg_gradient]);
+    res.send({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: 'Database insert failed' });
+  }
+});
+
 
 // Auth / Registration
 app.post('/register', insert.register);
